@@ -38,4 +38,4 @@ class LocalStorage {
 
 }
 
-export { LocalStore as default }
+export { LocalStorage as default }

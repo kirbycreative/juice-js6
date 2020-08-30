@@ -113,7 +113,7 @@ class Templates {
 
     targets = {};
 
-    constructor( options ){
+    constructor( options={} ){
         this.dir = options.dir || './';
     }
 
@@ -137,12 +137,16 @@ class Templates {
 
 }
 
+function initialize(){
+    console.log(Handlebars);
+}
+
 /*** Add Handelbars script and call initialize upon load. ***/
 
 let script = document.createElement('script');
 script.src = cdn_url;
 script.onload = initialize;
 
-document.appendChild( script );
+document.body.appendChild( script );
 
 export { Templates as default }
