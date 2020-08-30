@@ -1,10 +1,28 @@
 const cdn_url = "https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js";
 
-import Cache from './cache.mjs';
+import Cache from '../data/cache.mjs';
 const cache = new Cache('tpl');
 
-import Path from './utils/path.mjs';
+import Path from '../utils/path.mjs';
 import Parser from './parser.mjs';
+
+import EventEmitter from '../event/emitter.mjs';
+
+class TplStore {
+    static instances = {};
+
+    static get( name ){
+        return TplStore.instances[name];
+    }
+
+    static add( name, tpl ){
+        TplStore.instances[name] = tpl;
+    }
+
+    static has( name ){
+        return TplStore.instances[name] ? true : false;
+    }
+}
 
 class Template {
     
@@ -42,25 +60,78 @@ class Template {
 
 }
 
+class TemplateTarget extends EventEmitter {
+
+    current = null;
+    modifiers = [];
+    static instances = [];
+    
+    constructor( name, dom ){
+        super();
+        
+        this.name = name;
+        this.dom = typeof dom == 'string' ? document.querySelector( dom ) : dom;
+        TemplateTarget.instances.push( this );
+    }
+
+    addModifier( fn ){
+        this.modifiers.push( fn );
+    }
+
+    load( path, tokens ){
+
+        path = Path.resolve( this.dir, path );
+
+        this.dom.innerHTML = '';
+        if( this.current ) this.emit( 'unload', this.current.path );
+        this.current = null;
+
+        if(!TplStore.has(path) ) TplStore.add( new Template( path ) );
+        const tpl = TplStore.get( path );
+
+        let html = tpl.build( tokens );
+        this.emit( 'loaded', tpl.path );
+
+        this.dom.innerHTML = html;
+
+        this.current = tpl;
+
+        if( this.modifiers.length > 0 ){
+            for( let i=0;i<this.modifiers.length;i++){
+                this.modifiers[i]( tpl.path );
+            }
+        }
+
+        this.emit( 'changed', tpl.path );
+
+    }
+
+}
+
 
 class Templates {
 
-    tpls = {};
+    targets = {};
 
     constructor( options ){
         this.dir = options.dir || './';
     }
 
+    target( name, dom, options ){
+        if(!targets[name]) targets[name] = new TemplateTarget( name, dom, options );
+        return targets[name];
+    }
+
     use( path, tokens ){
         path = Path.resolve( this.dir, path );
-        if(!this.tpls[path]) this.tpls[path] = new Template( path );
-        return this.tpls[path];
+        if(!TplStore.has(path) ) TplStore.add( new Template( path ) );
+        return TplStore.get( path );
     }
 
     load( ...paths ){
         for(var i=0;i<paths.length;i++){
-            let path = Path.resolve( this.dir, paths[i] );
-            if(!this.tpls[path]) this.tpls[path] = new Template( path );
+            const path = Path.resolve( this.dir, paths[i] );
+            if(!TplStore.has( path ) ) TplStore.add( new Template( path ) );
         }
     }
 
