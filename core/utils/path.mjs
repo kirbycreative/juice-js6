@@ -21,22 +21,29 @@ class Path {
     }
 
     static resolve( ...parts ){
-        return parts.join( this.sep );
+        let ext = '';
+        if( parts[parts.length-1].charAt(0) === '.' ) ext = parts.pop();
+        return parts.map( part => part.replace(/^\/+|\/+$/g, '') ).join( this.sep ) +ext;
     }
 
     static ext( path ){
+        const idx = path.lastIndexOf(".");
+        if( idx < path.length - 4 ) return;
         return path.substring( path.lastIndexOf(".")+1 );
     }
 
     static script( search ){
         var scripts = document.getElementsByTagName("script");
+        
         let idx = scripts.length - 1;
         if( search ){
-            for( let i=0;i<scripts.length;i++) 
+            for( let i=0;i<scripts.length;i++){
+                console.log(scripts[i].src);
                 if(scripts[i].src.indexOf( search ) !== -1 ){
                     idx = i;
                     break;
                 }
+            }
         }
         return scripts[ idx ].src;
     }

@@ -4,11 +4,11 @@ class HTMLParser {
         this.input = html;
     }
 
-    head(){
+    static head(){
        return this.input.toString().split(/<head([^>]*)>/).pop().split(/<\/head>/).shift().trim();
     }
 
-    body(){
+    static body(){
         return this.input.toString().split(/<body([^>]*)>/).pop().split(/<\/body>/).shift().trim();
     }
 }

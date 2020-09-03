@@ -1,11 +1,14 @@
+import Definable from "../data/definable.mjs";
+
 class EmitterEvent extends Array {
 
     constructor( name, emitter ){
+        super();
         this.name = name;
         this.emitter = emitter;
     }
 
-    add( fn, options ){
+    add( fn, options={} ){
         this.push({ fn: fn, options: options });
     }
 
@@ -21,7 +24,9 @@ class EmitterEvent extends Array {
 
     emit( ...args ){
         for( var i=0;i<this.length;i++ ){
+            console.log( this.name, this[i]);
             this[i].fn.apply( this.emitter, args );
+
             if(this[i].options.once){
                 this.splice( i, 1 );
                 i--;
@@ -46,7 +51,7 @@ class EventListeners {
         return this.instances[event];
     }
 
-    add( event, fn, options ){
+    add( event, fn, options={} ){
 
         if( !this.has( event ) )
             this.instances[event] = new EmitterEvent( event );
@@ -61,10 +66,34 @@ class EventListeners {
     }
 }
 
-class EventEmitter {
+class EventEmitter extends Definable {
 
-    constructor(){
+    constructor( ...accessableEvents ){
+        super();
+        const self = this;
         this.listeners = new EventListeners( this );
+        
+        if( accessableEvents.length > 0 ){
+            for( let i=0;i<accessableEvents.length;i++){
+                this.initAccessableEvents( accessableEvents[i] );
+            }
+        }
+
+    }
+
+    initAccessableEvents( accessableEvent ){
+        const self = this;
+        
+        self.define( accessableEvent, self[accessableEvent], {
+            after: () => {
+                self.emit( accessableEvent, self[accessableEvent] );
+            }
+        });
+
+        if( self[accessableEvent] )
+        setTimeout(() => { self.emit( accessableEvent, self[accessableEvent] ); }, 1 );
+        
+        return false;
     }
 
     static bind( inst ){

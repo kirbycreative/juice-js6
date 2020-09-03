@@ -2,9 +2,8 @@
 
 import Path from './core/utils/path.mjs'
 import EventEmitter from './core/event/emitter.mjs';
-import Templates from './core/html/tpls.mjs';
 
-const script = Path.script('juice-6.mjs');
+const script = import.meta.url;
 console.log("Juice ES6", script);
 
 function JuiceModule( classRef ){
@@ -60,12 +59,16 @@ class JuiceJS extends EventEmitter {
     global = window || global;
     config = {};
 
-    constructor(){
+    constructor( config={} ){
         super();
         if( this.global.JUICE_CONFIG ){
             this.config = this.global.JUICE_CONFIG;
         }
-        this.tpl = new Templates();
+       
+    }
+
+    tpls(){
+
     }
 
     expose( variable, ns ){
@@ -74,11 +77,17 @@ class JuiceJS extends EventEmitter {
 
     module( mpath, dir ){
 
-        const parts = [ ( dir || this.dir ), mpath ];
-        if( Path.ext( mpath ) === undefined ) parts.push('.mjs');
+        const parts = [ ( dir || this.dir ), 'core', mpath ];
+        return new Promise((resolve, reject) => {
 
-        const fullpath = Path.resolve( ...parts );
+            if( Path.ext( mpath ) === undefined ) parts.push('.mjs');
+            const fullpath = Path.resolve( ...parts );
+            import( fullpath ).then( ( Module ) => {
+                resolve(Module.default);
 
+
+            });
+        });
     }
 
     require( ...mpaths ){
