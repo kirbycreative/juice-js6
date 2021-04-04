@@ -1,3 +1,0 @@
-class JuiceDate extends Date {
-    
-}
