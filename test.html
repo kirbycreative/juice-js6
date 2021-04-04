@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+            window.JUICE_CONFIG = {
+                paths: {
+                    home: 'xxx/ccc',
+                    modules: {
+                        lib: 'lib'
+                    }
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <script type="module" src="./juice6.mjs"  data-config="app/config" data-require="app/dependants"
+        data-onready="app/startup"></script>
+
+        <script type="module" src="./app.mjs" ></script>
+    </body>
+</html>

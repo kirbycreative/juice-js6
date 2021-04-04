@@ -1,96 +1,96 @@
-function createRequest(){
-				
+function createRequest() {
+
     var isIE8 = window.XDomainRequest ? true : false;
-    if (window.XMLHttpRequest){
+    if (window.XMLHttpRequest) {
         return isIE8 ? new window.XDomainRequest() : new XMLHttpRequest();
-    }else{
+    } else {
         return new ActiveXObject("Microsoft.XMLHTTP");
     }
-    
+
 }
 
 class Request {
 
-    options={};
+    options = {};
 
-    reqData=null;
+    reqData = null;
 
-    constructor( url, options={} ){
+    constructor(url, options = {}) {
 
         const self = this;
         self.url = url;
         self.options = options;
-      
+
     }
 
-    data( data, dataType='formdata' ){
-        if(!this.reqData) this.reqData = new FormData();
-        for(var prop in data){
-            this.reqData.append( prop, data[prop] );
+    data(data, dataType = 'formdata') {
+        if (!this.reqData) this.reqData = new FormData();
+        for (var prop in data) {
+            this.reqData.append(prop, data[prop]);
         }
         return this;
     }
 
-    headers( headers ){
-        if(!this.reqHeaders) this.reqHeaders = [];
-        for( var name in headers ){
+    headers(headers) {
+        if (!this.reqHeaders) this.reqHeaders = [];
+        for (var name in headers) {
             this.reqHeaders.push([name, headers[name]])
         }
         return this;
     }
 
-    async send( method ){
+    async send(method) {
 
 
         const xhr = createRequest();
 
         xhr.open( method, this.url, true );
-    
-        if( this.reqHeaders ){
-            this.reqHeaders.map( ( header ) =>  xhr.setRequestHeader.apply( xhr, header ) );
+
+        if (this.reqHeaders) {
+            this.reqHeaders.map((header) => xhr.setRequestHeader.apply(xhr, header));
         }
 
-        return new Promise(( resolve, reject ) => {
-            xhr.onreadystatechange = function(){
+        return new Promise((resolve, reject) => {
+            xhr.onreadystatechange = function () {
                 var state = xhr.readyState;
-                var responseType =  xhr.responseType || 'text';
-                var resp =  responseType == 'text' ? xhr.responseText : xhr.response;
+                var responseType = xhr.responseType || 'text';
+                var resp = responseType == 'text' ? xhr.responseText : xhr.response;
                 //console.log( state, xhr.status, resp );
-                if(state == 4){
+                if (state == 4) {
 
-                    if( xhr.status >= 400 ) {
+                    if (xhr.status >= 400) {
                         //Catch Error
-                        reject( resp );
+                        reject(resp);
                         return false;
                     }
 
                     //Successful Req
-                    return resolve( resp );
+                    return resolve(resp);
                 }
             }
-            xhr.send( self.reqData );
+            xhr.send(self.reqData);
         });
 
 
     }
 
-    get(){
+    get() {
         return this.send('GET');
     }
-    post(){
+    post() {
         return this.send('POST');
     }
-    head(){
+    head() {
         return this.send('HEAD');
     }
-    put(){
+    put() {
         return this.send('PUT');
     }
 
-    processData( data ){
+    processData(data) {
         this.data = new FormData();
-        for(var prop in data){
-            this.data.append( prop, data[prop] );
+        for (var prop in data) {
+            this.data.append(prop, data[prop]);
         }
 
     }

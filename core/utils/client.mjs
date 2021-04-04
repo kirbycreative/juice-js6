@@ -5,7 +5,7 @@ class Client {
     static get os(){
         if( this.defined.os ) return this.defined.os;
         if( process !== undefined && process.platform ){
-            if(/^win/.test(process.platform))     { this.defined.os = 'win'; }
+            if( /^win/.test(process.platform))     { this.defined.os = 'win'; }
             else if(process.platform === 'darwin'){ this.defined.os = 'osx'; }
             else if(process.platform === 'linux') { this.defined.os = 'linux'; }
         }else{
@@ -19,4 +19,4 @@ class Client {
 
 }
 
-export { Client as default }
+export default new Client();

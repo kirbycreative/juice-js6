@@ -1,11 +1,31 @@
-import Client from './client.mjs'
-const client = new Client();
+import client from './client.mjs';
+
+
+
 
 class Path {
+
+    static parse( src ){
+        const type = Path.type( src );
+        return {
+            dir: Path.dir( src ),
+            ext: Path.ext( src ),
+            filename: Path.filename( src ),
+            url: new URL( src ),
+            type: type,
+            src: src
+        }
+    }
 
     static get sep(){
         if( client.os == 'win' ) return '\\';
         else return '/';
+    }
+
+    static ext( path ){
+        const idx = path.lastIndexOf(".");
+        if( idx < path.length - 4 ) return;
+        return path.substring( path.lastIndexOf(".")+1 );
     }
 
     static dir( path ){
@@ -26,10 +46,12 @@ class Path {
         return parts.map( part => part.replace(/^\/+|\/+$/g, '') ).join( this.sep ) +ext;
     }
 
-    static ext( path ){
-        const idx = path.lastIndexOf(".");
-        if( idx < path.length - 4 ) return;
-        return path.substring( path.lastIndexOf(".")+1 );
+    static type( src ){
+        if( src.indexOf('http') === 0 ){
+            return 'url';
+        }else{
+            return 'path'
+        }
     }
 
     static script( search ){

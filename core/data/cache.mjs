@@ -1,4 +1,4 @@
-import LocalStorage from './local.mjs';
+import LocalStorage from './Local.mjs';
 
 const storage = new LocalStorage();
 const defined = [];

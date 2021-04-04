@@ -221,27 +221,27 @@ class XHR {
 
     static async posAsync( path, params ){
         return new Promise((resolve, reject) => {
-            new XHRRequest( 'POST', path, params ).success( resolve );
+            new XHRRequest( 'POST', path, params ).success( resolve ).fail( reject );
         });
     }
 
     static async getAsync( path, params ){
         return new Promise((resolve, reject) => {
-            new XHRRequest( 'GET', path, params ).success( resolve );
+            new XHRRequest( 'GET', path, params ).success( resolve ).fail( reject );
         });
     }
 
     static async headAsync( path, params ){
         return new Promise((resolve, reject) => {
-            new XHRRequest( 'HEAD', path, params ).success( resolve );
+            new XHRRequest( 'HEAD', path, params ).success( resolve ).fail( reject );
         });
     }
 
     static async putAsync( path, params ){
         return new Promise((resolve, reject) => {
-            new XHRRequest( 'POST', path, params ).success( resolve );
+            new XHRRequest( 'POST', path, params ).success( resolve ).fail( reject );
         });
     }
 }
 
-export { XHR as default }
+export default XHR;
