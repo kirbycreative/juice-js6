@@ -1,6 +1,8 @@
-import Path from './core/Utils/Path.mjs'
+import Path from './core/Utils/Path.mjs';
 import EventEmitter from './core/event/Emitter.mjs';
 import ObjectUtil from './core/Utils/Object.mjs';
+import Router from './core/App/Router.mjs';
+import Global from './core/Data/Global.mjs';
 
 const script = Path.parse( import.meta.url );
 console.log("Juice ES6", script);
@@ -87,7 +89,16 @@ class JuiceModule {
     }
 }
 
+class JuiceLoader extends EventEmitter {
 
+    constructor( paths ){
+
+    }
+
+    
+
+
+}
 
 
 class JuiceJS extends EventEmitter {
@@ -97,11 +108,13 @@ class JuiceJS extends EventEmitter {
         juice: script.dir, 
         root: script.url.origin,
         modules: {
-            core: Path.resolve( script.dir, 'core' ) 
+            core: '/core'
         }
     };
 
     global = window || global;
+
+    router = null;
     
     static Module = JuiceModule;
     static Blender = JuiceBlender;
@@ -110,14 +123,15 @@ class JuiceJS extends EventEmitter {
 
         super( 'ready' );
 
-        if(config) ObjectUtil.merge( config, this.config, true );
+        if( config ) ObjectUtil.merge( config, this.config, true );
+        if( this.global.JUICE_CONFIG ) ObjectUtil.merge( this.global.JUICE_CONFIG, this.config, true );
+        if( this.config.paths ) ObjectUtil.merge( this.config.paths, this.paths, true );
+        
+        console.log(this.paths);
 
-        if( this.global.JUICE_CONFIG ){
-            ObjectUtil.merge( this.global.JUICE_CONFIG, this.config, true );
-            if( this.config.paths ){
-                ObjectUtil.merge( this.config.paths, this.paths, true );
-            }
-        }
+        this.moduleRouter = new Router();
+
+    
 
         this.initialize();
 
@@ -131,13 +145,13 @@ class JuiceJS extends EventEmitter {
         return this.module( mpath, dir );
     }
 
-    module( mpath, dir ){
+    module( mpath, dir = 'core' ){
 
-        const parts = [ ( dir || this.dir ), 'core', mpath ];
+        const fullpath = this.moduleRouter.route( Path.resolve( dir, mpath ) );
+        console.log( mpath, fullpath );
+
         return new Promise((resolve, reject) => {
-            if( Path.ext( mpath ) === undefined ) parts.push('.mjs');
-            const fullpath = Path.resolve( ...parts );
-
+            
             import( fullpath ).then( ( Module ) => {
                 resolve( Module.default );
             }).catch( reject );
@@ -147,27 +161,27 @@ class JuiceJS extends EventEmitter {
 
     }
 
-    parsePath( path, dir=null ){
-        const paths = [];
-        if( dir ){
-            const directory = this.paths[dir] || this.paths.modules[dir] || dir;
 
-        }
-
-        if( path.charAt(0) == '/' ){
-            dir = this.paths.root;
-        }else if( path.substring( 0, 2 ) == './' ){
-            dir = this.paths.juice;
-        }else if( path.indexOf(/^((http|https):\/\/)/) === 0 ){
-            
-        }else if( path.indexOf('/') !== -1 ){
-            const parts = path.split('/');
-        }
-
-    }
 
     initialize(){
-        this.ready = true;
+
+        const moduleRewrite = ( rewrite ) => {
+            return rewrite + '.mjs';
+        }
+
+        this.moduleRouter.set('core/*', '/core', moduleRewrite );
+
+        if(this.paths.modules){
+            for( let tag in this.paths.modules ){
+                this.moduleRouter.set( tag+'/*', this.paths.modules[tag], moduleRewrite );
+            }
+        }
+
+        setTimeout(() => {
+            this.ready = true;
+        }, 0 );
+
+        return false;
     }
 
 }

@@ -4,6 +4,7 @@ class ObjectUtil {
 
     static merge( source, dest, overwrite=false ){
         for( let prop in source ){
+            if( !overwrite && dest[prop] ) continue;
             switch( typeof dest[prop] ){
                 case 'object':
                     ObjectUtil.merge( source[prop], dest[prop], overwrite );
@@ -15,7 +16,7 @@ class ObjectUtil {
                     }
                 break;
                 default:
-                    dest[prop] = source[prop];
+                    Object.defineProperty(dest, prop, Object.getOwnPropertyDescriptor(source, prop ) )
             }
         }
     }
