@@ -95,7 +95,7 @@ class JuiceLoader extends EventEmitter {
 
     }
 
-    
+
 
 
 }
@@ -139,6 +139,10 @@ class JuiceJS extends EventEmitter {
 
     expose( variable, ns ){
         this.global[ns] = variable;
+    }
+
+    require( ...modules ){
+        return Promise.all( modules.map( module => this.module( module ) ) );
     }
 
     async moduleAsync( mpath, dir ){

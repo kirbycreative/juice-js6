@@ -16,7 +16,7 @@ class ObjectUtil {
                     }
                 break;
                 default:
-                    Object.defineProperty(dest, prop, Object.getOwnPropertyDescriptor(source, prop ) )
+                    Object.defineProperty( dest, prop, Object.getOwnPropertyDescriptor(source, prop ) );
             }
         }
     }

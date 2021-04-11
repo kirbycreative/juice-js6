@@ -15,6 +15,7 @@ juice.on( 'ready', function( value ) {
     console.log( 'Juice Ready', value  );
 });
 
-const Router = await juice.module('App/Router');
+
+juice.require('App/Router', 'Data/Cache', 'Data/Definable').then( console.log );
 
 console.log(juice);
