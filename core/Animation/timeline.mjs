@@ -9,7 +9,7 @@ window.cancelAnimationFrame = window.cancelAnimationFrame
     || function(requestID){clearTimeout(requestID)} //fall back
 
 
-import AniUtil from './util.mjs';
+import AniUtil from './Util.mjs';
 
 
 class AnimationTime {

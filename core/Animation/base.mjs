@@ -1,7 +1,7 @@
-import AnimationStage from './stage.mjs';
-import AnimationView from './view.mjs';
-import Timeline from './timeline.mjs';
-import Debug from './debug.mjs';
+import AnimationStage from './Stage.mjs';
+import AnimationView from './View.mjs';
+import Timeline from './Timeline.mjs';
+import Debug from './Debug.mjs';
 
 new Debug();
 
