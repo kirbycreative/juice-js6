@@ -1,4 +1,4 @@
-import HTMLParser from './parser.mjs';
+import HTMLParser from './Parser.mjs';
 
 
 const REGEX = {
