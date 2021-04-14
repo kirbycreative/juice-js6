@@ -1,3 +1,5 @@
+let versionSearchString;
+
 const BROWSER_TYPES = [
     { string: navigator.userAgent, subString: "chrome", identity: "Chrome" },
     { string: navigator.userAgent, subString: "omniweb", versionSearch: "OmniWeb/", 
@@ -37,7 +39,7 @@ function testData(data){
         var tester = ( typeof data[i].string != 'undefined' ? 
             data[i].string.toLowerCase() : ( typeof data[i].prop != 'undefined' ? data[i].prop  : null ) );			
         if(tester){
-            this.versionSearchString = data[i].versionSearch || data[i].identity;
+            versionSearchString = data[i].versionSearch || data[i].identity;
             if(typeof tester == 'string'){
                 if (tester.indexOf(data[i].subString) != -1) return data[i].identity;
             }else if (typeof tester == 'object' && tester){
@@ -89,14 +91,14 @@ class ClientSystem {
 
     static get browser(){
         return {
-            name: testData(bdata.browserTypes) || "unknown",
+            name: testData( BROWSER_TYPES ) || "unknown",
 		    version: searchVersion(navigator.userAgent) || searchVersion(navigator.appVersion) || "unknown"
         }
     }
 
     static get os(){
         if( this.defined.os ) return this.defined.os;
-        return testData(bdata.osTypes) || "unknown";
+        return testData( OS_TYPES ) || "unknown";
     }
 
     static get flash(){

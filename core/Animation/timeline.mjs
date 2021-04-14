@@ -108,16 +108,17 @@ class Timeline {
     update = null;
     render = null;
 
-    time = new AnimationTime();
+    time = null;
 
     constructor(){
         console.log('new Timeline');
+        this.time = new AnimationTime();
         ticker.add( this );
     }
 
     tick( ms ){
         this.time.update( ms );
-        console.log( 'tick', this.time );
+       // console.log( 'tick', this.time );
         if( this.fps ){
 
         }

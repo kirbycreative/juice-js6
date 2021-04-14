@@ -1,4 +1,4 @@
-import AniUtil from './util.mjs';
+import AniUtil from './Util.mjs';
 
 
 class Vector {

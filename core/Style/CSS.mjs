@@ -1,5 +1,5 @@
-import Client from '../client/base.mjs';
-console.log(Client.browser);
+import Browser from '../Client/Browser.mjs';
+console.log(Browser);
 const sheets = {};
 
 const head = document.head || document.getElementsByTagName('head')[0];
@@ -39,7 +39,7 @@ class Style {
 				var k = prop.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
 				if(prefixed.indexOf(k) != -1){
 					props[k] = _props[prop];
-					if(Client.browser.prefix && Client.browser.prefix.css) props[Client.browser.prefix.css+k] = _props[prop];
+					if(Browser.prefix && Browser.prefix.css) props[Browser.prefix.css+k] = _props[prop];
 				}else{
 					props[k] = _props[prop];
 				}
@@ -303,8 +303,8 @@ class CSS {
 				for(keyframe in props){
 					kprops[keyframe] = Style.prefix(props[keyframe]);
 				}
-				if( Client.browser.prefix && Client.browser.prefix.css){
-				this.addRule(_class.replace('@keyframes','@'+Client.browser.prefix.css+'keyframes'), kprops);
+				if( Browser.prefix && Browser.prefix.css){
+				this.addRule(_class.replace('@keyframes','@'+Browser.prefix.css+'keyframes'), kprops);
 				}
 				this.addRule(_class, kprops);
 		}else{

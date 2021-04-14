@@ -1,4 +1,4 @@
-import client from './client.mjs';
+import ClientSystem from '../Client/System.mjs';
 
 
 
@@ -18,7 +18,7 @@ class Path {
     }
 
     static get sep(){
-        if( client.os == 'win' ) return '\\';
+        if( ClientSystem.os == 'win' ) return '\\';
         else return '/';
     }
 

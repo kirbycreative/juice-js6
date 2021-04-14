@@ -108,7 +108,7 @@ class JuiceJS extends EventEmitter {
         juice: script.dir, 
         root: script.url.origin,
         modules: {
-            core: '/core'
+            core: './core'
         }
     };
 
@@ -173,7 +173,7 @@ class JuiceJS extends EventEmitter {
             return rewrite + '.mjs';
         }
 
-        this.moduleRouter.set('core/*', '/core', moduleRewrite );
+        this.moduleRouter.set('core/*', Path.resolve( this.paths.juice, 'core'), moduleRewrite );
 
         if(this.paths.modules){
             for( let tag in this.paths.modules ){

@@ -17,10 +17,11 @@ class HTMLBuilder {
 
     scope = null;
 
-    constructor( domString, container ){
-        
-        this.scope = tmp;
-        this.parts = domString.match( REGEX.split_parts );
+    constructor( source, container ){
+
+        this.src = source;
+        this.container = container;
+        this.parts = source.match( REGEX.split_parts );
         const tmp = this.parseParts();
 
         
