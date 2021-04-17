@@ -113,9 +113,7 @@ class DebugInfo extends HTMLElement {
 
   
     connectedCallback() {
-        console.log('createdCallback');
-        this.setAttribute('fps', 0);
-        this.setAttribute('time', 0);
+        
     };
 
     disconnectedCallback(){

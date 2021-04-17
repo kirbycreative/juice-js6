@@ -4,4 +4,4 @@ class GlobalData {
     }
 }
 
-export default ( new GlobalData );
+export default ( new GlobalData() );

@@ -2,6 +2,7 @@ import Path from './core/Utils/Path.mjs';
 import EventEmitter from './core/event/Emitter.mjs';
 import ObjectUtil from './core/Utils/Object.mjs';
 import Router from './core/App/Router.mjs';
+import Loader from '../juice/core/Http/Loader.mjs';
 import Global from './core/Data/Global.mjs';
 
 const script = Path.parse( import.meta.url );
@@ -104,6 +105,7 @@ class JuiceLoader extends EventEmitter {
 class JuiceJS extends EventEmitter {
 
     config = {};
+    manifest = {};
     paths = { 
         juice: script.dir, 
         root: script.url.origin,
@@ -119,9 +121,12 @@ class JuiceJS extends EventEmitter {
     static Module = JuiceModule;
     static Blender = JuiceBlender;
 
-    constructor( config=null ){
+    load = Loader.load;
+    loadAll = Loader.loadAll;
 
-        super( 'ready' );
+    constructor( config=null, global=false ){
+
+        super( );
 
         if( config ) ObjectUtil.merge( config, this.config, true );
         if( this.global.JUICE_CONFIG ) ObjectUtil.merge( this.global.JUICE_CONFIG, this.config, true );
@@ -131,8 +136,9 @@ class JuiceJS extends EventEmitter {
 
         this.moduleRouter = new Router();
 
-    
-
+        if( global ) this.global.juice = this;
+        Global.juice = this;
+        console.log(Global);
         this.initialize();
 
     }
@@ -141,24 +147,76 @@ class JuiceJS extends EventEmitter {
         this.global[ns] = variable;
     }
 
-    require( ...modules ){
-        return Promise.all( modules.map( module => this.module( module ) ) );
+    async require( ...modules ){
+        const self = this;
+        return Promise.all( modules.map( module => this.module( module ) ) ).then( ( required ) => {
+            const resp = {};
+            for( let i=0;i<required.length;i++ ){
+                ObjectUtil.merge( required[i], resp );                
+            }
+            return resp;
+        });
     }
 
     async moduleAsync( mpath, dir ){
         return this.module( mpath, dir );
     }
 
-    module( mpath, dir = 'core' ){
+    async module( source, dir = 'core' ){
 
-        const fullpath = this.moduleRouter.route( Path.resolve( dir, mpath ) );
-        console.log( mpath, fullpath );
+        const self = this;
+        let features = [];
+        let [ moduleSource, featureSource = 'default' ] = source.split('::');        
+
+        if( featureSource.indexOf('{') !== -1 ){
+            //if featureSource is in {}
+            features = featureSource.split('{').pop().split('}').shift().split(',').map( f => f.trim() );
+        }else{
+            //if No feature (default) or feature is single
+            features = [featureSource];
+        }
+
+        features = features.map(( f ) => {
+            let [ path, alias ] = f.split(' as ');
+            return { path: path, alias: alias };
+        });
+
+        let [ modulePath, moduleAlias ] = moduleSource.split(' as ');
 
         return new Promise((resolve, reject) => {
+
+            function compile( Module ){
+
+                let resp = {};
+
+                if( features.length ){
+                    if( features.length == 1 && features[0].path == 'default' ){
+                        if( moduleAlias && !features[0].alias ){
+                            resp = Module.default;
+                        }
+                    }else{
+                        for(const { path, alias } of features ){
+                            resp[alias || Module[path].name || path] = Module[path];
+                        }
+                    }
+                }                
+
+                resolve( moduleAlias ? { [moduleAlias]: resp } : resp );
+
+            }
+
+            if( self.manifest[modulePath] ){
+
+                compile( self.manifest[modulePath] );
+
+            }else{
             
-            import( fullpath ).then( ( Module ) => {
-                resolve( Module.default );
-            }).catch( reject );
+                import( this.moduleRouter.route( Path.resolve( dir, modulePath ) ) ).then( ( Module ) => {
+                    self.manifest[modulePath] = Module;                
+                    compile( Module );
+                }).catch( reject );
+
+            }
            
             return false;
         });
@@ -181,6 +239,12 @@ class JuiceJS extends EventEmitter {
             }
         }
 
+        if( this.config.require ){
+            this.require( ...this.config.require ).then( ( ...required ) => {
+                return this.emit('ready', ...required );
+            });
+        }
+
         setTimeout(() => {
             this.ready = true;
         }, 0 );
@@ -190,7 +254,5 @@ class JuiceJS extends EventEmitter {
 
 }
 
-//const juice = new JuiceJS();
-//juice.expose( juice, 'juice' );
 
-export { JuiceJS as default, JuiceModule, JuiceBlender }; 
+export { JuiceJS as default, JuiceModule, JuiceBlender, Global }; 

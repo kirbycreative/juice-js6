@@ -1,48 +1,51 @@
 import Path from '../Utils/Path.mjs';
 
+const ASSET_TYPES = {
+    'script': ['js', 'mjs'],
+    'stylesheet': ['css'],
+    'image': ['jpg', 'png', 'gif', 'bmp'],
+    'font': ['ttf', 'woff'],
+    'document': ['html', 'txt']
+}
+
 class Loader {
 
-    types = {
-        'script': ['js', 'mjs'],
-        'stylesheet': ['css'],
-        'image': ['jpg', 'png', 'gif', 'bmp'],
-        'font': ['ttf', 'woff'],
-        'document': ['html', 'txt']
+    
+
+    static loadAll( ...urls ){
+        return Promise.all( urls.map( url => Loader.load( url ) ) );
     }
 
-    loadAll( ...urls ){
-        return new Promise.all( urls.map( url => Loader.load( url ) ) );
-    }
-
-    load( url ){
-
+    static load( url ){
+        
         const ext = Path.ext( url );
         let loadType = 'document';
 
-        for( let type in this.types ){
-            if ( this.types[type].indexOf(ext) !== -1 ){
+        for( let type in ASSET_TYPES ){
+            if ( ASSET_TYPES[type].indexOf(ext) !== -1 ){
                 loadType = type;
                 break;
             }
         }
-
         return this[loadType]( url );
 
     }
 
-    image( url ){
-    
+    static image( url ){
+
         const img = new Image();
 
         return new Promise( (resolve, reject) => {
-            img.onload = resolve;
+            img.onload = function(){
+                resolve( img );
+            };
             img.onerror = reject;
             img.src = url;
         });
 
     }
 
-    script( url ){
+    static script( url ){
 
         const ext = Path.ext( url );
 
@@ -67,7 +70,7 @@ class Loader {
         });
     }
 
-    stylesheet( url ){
+    static stylesheet( url ){
 
         const link = document.createElement('link');
         link.type = 'text/css';
@@ -91,7 +94,7 @@ class Loader {
 
     }
 
-    document( url ){
+    static document( url ){
 
         return new Promise( (resolve, reject) => {
 
@@ -100,3 +103,5 @@ class Loader {
     }
 
 }
+
+export default Loader;

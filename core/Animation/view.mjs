@@ -1,10 +1,14 @@
 class AnimationView {
 
-  
+    container = null;
     width=null;
     height=null;
 
-    constructor( animation ){
+    constructor( animation, container ){
+        this.container = container;
+        const rect = container.getBoundingClientRect();
+        this.width = rect.width;
+        this.height = rect.height;
         console.log( 'AnimationView', animation );
     }
 
