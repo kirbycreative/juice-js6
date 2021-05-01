@@ -56,7 +56,7 @@ const CONFIG_OPTIONS = {
   require: ['Module Path 1', 'Module Path 2', ... ],
   paths: {
     modules: {
-      [EXTERNAL_MODULE_KEY]: "EXTERNAL_MODULE_PATH"
+      [EXTERNAL_MODULE_ROUTE]: "EXTERNAL_MODULE_DIR_PATH"
     }
   }
 }
