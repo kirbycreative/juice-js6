@@ -10,17 +10,18 @@ Pure Javascript Require class based framework ES6 Rewrite.
 
 To add Juice JS to your project add this line of code.
 
-```<script type="text/javascript" src="src/juice.js" ></script>```
+```javascript
+<script type="text/javascript" src="src/juice.js" ></script>
+```
 
   Simply change **src** value to match your website or app path.
   
   OR import it into a module as follows.
   
-  ```
+  ```javascript
   import JuiceJS from 'JUICE_SRC_DIR/juice6.mjs';
   
   const juice = new JuiceJS( CONFIG_OPTIONS: Object, EXPOSE: Boolean );
-  
   ```
   
   ***
@@ -28,7 +29,9 @@ To add Juice JS to your project add this line of code.
 
 ## Configure Juice JS
 
-```<script type="text/javascript" src="src/juice.js" data-config="[optional]" data-require="[optional]" data-onready="[optional]"></script>```
+```javascript
+<script type="text/javascript" src="src/juice.js" data-config="[optional]" data-require="[optional]" data-onready="[optional]"></script>
+```
 
 ### Optional Parameters (Data Tags)
 
@@ -47,7 +50,7 @@ To add Juice JS to your project add this line of code.
 
 Configuration Options can be set directly as a JuiceJS argument or as a path to a configuration file.
 
-```
+```javascript
 
 const CONFIG_OPTIONS = {
   require: ['Module Path 1', 'Module Path 2', ... ],
