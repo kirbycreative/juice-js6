@@ -14,6 +14,15 @@ To add Juice JS to your project add this line of code.
 
   Simply change **src** value to match your website or app path.
   
+  OR import it into a module as follows.
+  
+  ```
+  import JuiceJS from 'JUICE_SRC_DIR/juice6.mjs';
+  
+  const juice = new JuiceJS( CONFIG_OPTIONS: Object, EXPOSE: Boolean );
+  
+  ```
+  
   ***
   
 
@@ -33,6 +42,25 @@ To add Juice JS to your project add this line of code.
   
   **data-name**: Variable name you want to access Juice JS defaults to **"juice"**
   ***
+  
+### Configuration Options
+
+Configuration Options can be set directly as a JuiceJS argument or as a path to a configuration file.
+
+```
+
+const CONFIG_OPTIONS = {
+  require: ['Module Path 1', 'Module Path 2', ... ],
+  paths: {
+    modules: {
+      [EXTERNAL_MODULE_KEY]: "EXTERNAL_MODULE_PATH"
+    }
+  }
+}
+
+const juice = new JuiceJS( CONFIG_OPTIONS );
+
+```
 
 ## Using Juice JS
 
