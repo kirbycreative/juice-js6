@@ -89,15 +89,25 @@ TODO ES6
 
 ```javascript
 
-TODO ES6
+juice.require('App/Router', 'Data/Cache as AppCache', 'Data/Definable').then(({ Router, AppCache, Definable }) => {
+
+}).catch( console.error );
+
+```
+OR
+```javascript
+
+const { Router, AppCache, Definable } await juice.require('App/Router', 'Data/Cache as AppCache', 'Data/Definable');
 
 ```
 
 #### At Module Load
 
+Each Module can also be used independantly as any other module would.
+
 ```javascript 
-
-TODO ES6
-
+import Router from './core/App/Router.mjs';
+import Cache as AppCache from './core/Data/Cache.mjs';
+import Definable from './core/Data/Definable.mjs';
 ```
 
