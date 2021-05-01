@@ -104,7 +104,7 @@ juice.require('App/Router', 'Data/Cache as AppCache', 'Data/Definable').then(({ 
 OR
 ```javascript
 
-const { Router, AppCache, Definable } await juice.require('App/Router', 'Data/Cache as AppCache', 'Data/Definable');
+const { Router, AppCache, Definable } = await juice.require('App/Router', 'Data/Cache as AppCache', 'Data/Definable');
 
 ```
 
