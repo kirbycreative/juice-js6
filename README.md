@@ -63,6 +63,10 @@ const CONFIG_OPTIONS = {
 
 const juice = new JuiceJS( CONFIG_OPTIONS );
 
+juice.on( 'ready', function({ Module1, Module2 }) {
+    console.log( 'Juice Ready', Module1, Module2  );
+});
+
 ```
 
 ## Using Juice JS
