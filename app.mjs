@@ -1,6 +1,7 @@
 import JuiceJS from './juice6.mjs';
 
 const juice = new JuiceJS({
+    require: 'Animation/Stage',
     paths: {
         views: {
 

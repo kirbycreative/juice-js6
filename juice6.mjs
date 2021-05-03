@@ -1,6 +1,6 @@
-import Path from './core/Utils/Path.mjs';
+import Path from './core/Util/Path.mjs';
 import EventEmitter from './core/event/Emitter.mjs';
-import ObjectUtil from './core/Utils/Object.mjs';
+import ObjectUtil from './core/Util/Object.mjs';
 import Router from './core/App/Router.mjs';
 import Loader from '../juice/core/Http/Loader.mjs';
 import Global from './core/Data/Global.mjs';
@@ -162,9 +162,19 @@ class JuiceJS extends EventEmitter {
         return this.module( mpath, dir );
     }
 
-    async module( source, dir = 'core' ){
+    async module( source, dir = null ){
 
         const self = this;
+        const parts = source.split('/');
+
+        if( !dir && Object.keys( this.paths.modules ).indexOf( parts[0] ) !== -1 ){
+            dir = parts.shift();
+            source = parts.join('/');
+        }else{
+            dir = 'core';
+        }
+    
+
         let features = [];
         let [ moduleSource, featureSource = 'default' ] = source.split('::');        
 
@@ -183,16 +193,27 @@ class JuiceJS extends EventEmitter {
 
         let [ modulePath, moduleAlias ] = moduleSource.split(' as ');
 
+        if( dir ){
+            modulePath = Path.resolve( dir, modulePath );
+        }
+
+
         return new Promise((resolve, reject) => {
 
             function compile( Module ){
 
                 let resp = {};
 
+                console.log(Module);
+
                 if( features.length ){
                     if( features.length == 1 && features[0].path == 'default' ){
                         if( moduleAlias && !features[0].alias ){
                             resp = Module.default;
+                        }else if( features[0].alias ){
+                            resp = { [features[0].alias]: Module[features[0].path] }
+                        }else if( !moduleAlias && !features[0].alias ){
+                            resp = { [features[0].path]: Module[features[0].path] }
                         }
                     }else{
                         for(const { path, alias } of features ){
@@ -200,7 +221,7 @@ class JuiceJS extends EventEmitter {
                         }
                     }
                 }                
-
+                console.log(resp)
                 resolve( moduleAlias ? { [moduleAlias]: resp } : resp );
 
             }
@@ -211,7 +232,7 @@ class JuiceJS extends EventEmitter {
 
             }else{
             
-                import( this.moduleRouter.route( Path.resolve( dir, modulePath ) ) ).then( ( Module ) => {
+                import( this.moduleRouter.route( modulePath ) ).then( ( Module ) => {
                     self.manifest[modulePath] = Module;                
                     compile( Module );
                 }).catch( reject );

@@ -123,7 +123,12 @@ class Timeline {
 
         }
 
-        if( this.update ) this.update();
+        if( this.update ) this.update(this.time);
+        if( this.render ) this.render(this.time);
+
+    }
+
+    add( update, render ){
 
     }
 }

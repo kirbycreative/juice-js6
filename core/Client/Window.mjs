@@ -3,9 +3,10 @@ import Cookies from './Cookies.mjs';
 //window.screen.availWidth
 //window.screen.availHeight
 
-class ClientWindow extends EventEmitter{
+class Window extends EventEmitter{
 
     constructor(){
+        super();
         this.cookies = Cookies;
         this.initialize();
     }
@@ -47,4 +48,4 @@ class ClientWindow extends EventEmitter{
 }
 
 
-export default new ClientWindow();
+export default new Window();

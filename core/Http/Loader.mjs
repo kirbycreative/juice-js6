@@ -1,4 +1,4 @@
-import Path from '../Utils/Path.mjs';
+import Path from '../Util/Path.mjs';
 
 const ASSET_TYPES = {
     'script': ['js', 'mjs'],
@@ -12,7 +12,7 @@ class Loader {
 
     
 
-    static loadAll( ...urls ){
+    static async loadAll( ...urls ){
         return Promise.all( urls.map( url => Loader.load( url ) ) );
     }
 

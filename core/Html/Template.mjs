@@ -3,7 +3,7 @@ const cdn_url = "https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.
 import Cache from '../data/cache.mjs';
 const cache = new Cache('tpl');
 
-import Path from '../utils/path.mjs';
+import Path from '../Util/path.mjs';
 import Parser from './parser.mjs';
 
 import xhr from '../request/xhr.mjs';

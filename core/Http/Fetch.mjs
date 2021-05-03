@@ -1,4 +1,4 @@
-import ObjectUtil from '../Utils/Object.mjs';
+import ObjectUtil from '../Util/Object.mjs';
 /*
 
 OPTIONS = {
